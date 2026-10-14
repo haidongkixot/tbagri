@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   TBAgri design tokens — đo từ file thiết kế (canvas 1250px, @1x).
+   Quy ước: 1 "px thiết kế" = 1/16 rem. Ví dụ 925px → 57.8125rem.
+   Trên màn ≥1024px, cỡ chữ gốc co giãn theo bề rộng màn hình nên
+   toàn bộ bố cục giữ đúng tỉ lệ thiết kế.
+------------------------------------------------------------------- */
+@theme {
+  --color-navy: #00377b;
+  --color-navy-700: #002a5e;
+  --color-green: #62bb46;
+  --color-green-600: #35913a;
+  --color-green-icon: #5aab3f;
+  --color-green-pale: #cdebc5;
+  --color-green-card: #daebc1;
+  --color-mint: #d6fdd0;
+  --color-sky-50: #eff9fe;
+  --color-sky-100: #dff1fd;
+  --color-line: #acb6bc;
+  --color-ink: #0b0b0b;
+  --color-danger: #b42318; /* lỗi form (không có trong thiết kế, đạt tương phản AA) */
+  --color-danger-50: #fef3f2;
+
+  --font-display: var(--font-lora), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-montserrat), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-photo: 1.75rem; /* 28px — góc bo ảnh */
+  --radius-card: 1.5rem; /* 24px — góc bo thẻ */
+  --radius-chip: 0.75rem; /* 12px — nhãn */
+
+  --container-site: 57.8125rem; /* 925px — khung nội dung */
+  --container-hero: 57.8125rem;
+  --container-card: 51rem; /* 816px — thẻ giới thiệu */
+
+  --animate-fade-in: fade-in 0.35s ease-out both;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.375rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+@media (min-width: 1024px) {
+  html {
+    font-size: clamp(14px, 1.28vw, 20px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Khung nội dung chuẩn của trang (925px thiết kế) */
+@utility container-site {
+  width: min(100% - 2rem, var(--container-site));
+  margin-inline: auto;
+}
+
+/* Tiêu đề Lora in hoa — "DEL CAMPO AL MERCADO", "SOLUCIÓN INTEGRAL" */
+@utility title-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-navy);
+  font-size: 1.75rem;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  @media (min-width: 1024px) {
+    font-size: 2.1875rem; /* 35px */
+    line-height: 1.08;
+  }
+}
+
+/* Tiêu đề Lora cạnh ảnh — "GRUPO DE PRODUCTOS Y SERVICIOS", "SEMILLAS E INSUMOS" */
+@utility title-side {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-navy);
+  font-size: 1.625rem;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  @media (min-width: 1024px) {
+    font-size: 2.0625rem; /* 33px */
+    line-height: 2.5rem; /* 40px */
+  }
+}
+
+/* Tiêu đề phụ Montserrat in hoa — "SEMILLAS DE ARROZ", "MODELO DE SERVICIO" */
+@utility title-caps {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-navy);
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.2;
+}
+
+/* Đoạn văn: 13.4px / 15.25px trên desktop (đo từ thiết kế), 15px trên mobile */
+@utility text-body {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  @media (min-width: 1024px) {
+    font-size: 0.8375rem; /* 13.4px */
+    line-height: 0.953rem; /* 15.25px */
+  }
+}
+
+/* Nút xanh lá "Contáctenos para una consulta…" */
+@utility btn-green {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--color-green);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  padding: 0.75rem 1.375rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.04);
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+  &:hover {
+    background: var(--color-green-600);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+  &:focus-visible {
+    outline: 3px solid var(--color-navy);
+    outline-offset: 2px;
+  }
+  @media (min-width: 1024px) {
+    font-size: 0.9375rem; /* 15px */
+    padding: 0.6875rem 1.375rem;
+  }
+}
+
+/* Nền trời mây nhạt dùng cho s04, s06 */
+@utility bg-sky-soft {
+  background-color: var(--color-sky-50);
+  background-image:
+    linear-gradient(rgb(239 249 254 / 0.42), rgb(239 249 254 / 0.42)), url(/images/sky-soft.webp);
+  background-size: cover;
+  background-position: center top;
+}
+
+/* Mũi tên nét đứt của dây chuyền sau thu hoạch (s10): nét 8.5px, hở 5.5px, dày 2px */
+@utility dash-x {
+  height: 0.125rem;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-green) 0 0.53rem,
+    transparent 0.53rem 0.875rem
+  );
+}
+@utility dash-y {
+  width: 0.125rem;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-green) 0 0.53rem,
+    transparent 0.53rem 0.875rem
+  );
+}
+
+/* Ảnh minh họa có nền trắng (dây chuyền sau thu hoạch) hoà vào nền */
+@utility img-multiply {
+  mix-blend-mode: multiply;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-green);
+  outline-offset: 2px;
+}
