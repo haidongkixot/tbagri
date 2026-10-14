@@ -25,15 +25,15 @@ PGlite chỉ cho một tiến trình mở: tắt `npm run dev` trước khi ch�
 | `npm run admin:create` | Tạo/đặt lại tài khoản quản trị |
 
 ## Deploy lên Vercel
-1. Tạo project Vercel từ repo; **Build Command**: `npm run vercel-build` (migrate Neon rồi build).
+1. Tạo project Vercel từ repo; **Build Command**: `npm run vercel-build`
+   (chạy `scripts/bootstrap.ts`: migrate → seed → tạo admin nếu có biến, rồi build).
 2. Storage → tạo **Neon Postgres** (biến `DATABASE_URL`) và **Blob** (biến `BLOB_READ_WRITE_TOKEN`).
 3. Environment Variables (Production): `SESSION_SECRET`, `IP_HASH_SALT`, `NEXT_PUBLIC_SITE_URL`
    (https://tên-miền), tùy chọn `RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_NOTIFY_FROM`.
-4. Deploy lần đầu → chạy seed và tạo admin trên Neon **từ máy mình**:
-   ```bash
-   DATABASE_URL='postgres://…' npm run db:seed
-   DATABASE_URL='postgres://…' ADMIN_EMAIL=… ADMIN_PASSWORD='…' npm run admin:create
-   ```
+4. Tài khoản quản trị đầu tiên: thêm `ADMIN_EMAIL`, `ADMIN_PASSWORD` (≥ 12 ký tự, có chữ và số)
+   và `ADMIN_NAME`, deploy một lần — bước build sẽ tạo tài khoản. Sau đó **xóa `ADMIN_PASSWORD`**
+   khỏi Environment Variables và đổi mật khẩu khi đăng nhập lần đầu.
+   Cách khác, chạy từ máy mình: `DATABASE_URL='postgres://…' ADMIN_EMAIL=… ADMIN_PASSWORD='…' npm run admin:create`.
 5. Chạy `/release-check` trong Claude Code, sửa các mục ✗, rồi Promote to Production.
 
 ## Tài liệu

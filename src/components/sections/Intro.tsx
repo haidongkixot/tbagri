@@ -17,7 +17,7 @@ export function Intro({ intro, audiences }: Props) {
     <section
       id="introduccion"
       aria-labelledby="intro-title"
-      className="relative z-10 scroll-mt-20 lg:-mt-[25.09375rem] lg:pb-[1.6875rem]"
+      className="relative z-10 scroll-mt-20 lg:-mt-[var(--hero-overlap)] lg:pb-[1.6875rem]"
     >
       <SectionMarker id="s03" className="top-0 h-[32.0625rem]" />
       {/* Dải xanh lá phía dưới (full màn hình) */}

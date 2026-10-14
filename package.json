@@ -15,7 +15,7 @@
     "db:migrate": "node --env-file-if-exists=.env.local --import tsx scripts/db-migrate.ts",
     "db:seed": "node --env-file-if-exists=.env.local --import tsx scripts/db-seed.ts",
     "db:studio": "drizzle-kit studio",
-    "vercel-build": "npm run db:migrate && next build",
+    "vercel-build": "node --env-file-if-exists=.env.local --import tsx scripts/bootstrap.ts && next build",
     "admin:create": "node --env-file-if-exists=.env.local --import tsx scripts/create-admin.ts",
     "test": "vitest run",
     "test:watch": "vitest",

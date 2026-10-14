@@ -30,7 +30,16 @@
   --radius-chip: 0.75rem; /* 12px — nhãn */
 
   --container-site: 57.8125rem; /* 925px — khung nội dung */
-  --container-hero: 57.8125rem;
+  --container-hero: 57.8125rem; /* khung tiêu đề hero, giữ theo thiết kế */
+  /* Hero chạy hết bề ngang màn hình: ảnh 925 × 893.5 (thiết kế) → cao 96.6% bề ngang,
+     thẻ giới thiệu đè lên 401.5/925 = 43.4% để vẫn nằm sát dưới cụm vòng tròn. */
+  --hero-h: 96.6vw;
+  --hero-overlap: 43.4vw;
+  /* Tiêu đề hero co giãn theo bề ngang như phần ảnh (số đo thiết kế ÷ 925), có trần để
+     không quá lớn trên màn siêu rộng. */
+  --hero-title-top: min(3.2vw, 4rem);
+  --hero-title-1: min(3.72vw, 4.4rem);
+  --hero-title-2: min(2.55vw, 3rem);
   --container-card: 51rem; /* 816px — thẻ giới thiệu */
 
   --animate-fade-in: fade-in 0.35s ease-out both;

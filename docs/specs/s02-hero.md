@@ -11,7 +11,7 @@ Thông điệp định vị: TBAgri đi cùng nhà sản xuất từ đồng ru�
 ## Bố cục desktop
 | Khối | x | y (từ đỉnh section) | rộng × cao | Ghi chú |
 |---|---|---|---|---|
-| Khung ảnh | 160 | 0 | 925 × 893.5 | Không full màn hình; phần dưới 492px nằm sau thẻ s03 |
+| Khung ảnh | 0 | 0 | 100vw × 96.6vw | **Bản chạy thật: full màn hình** (TBAgri duyệt 14/10/2026). Thiết kế gốc để 925 × 893.5 có lề trắng hai bên; nay ảnh chạy hết bề ngang, cao theo tỉ lệ 893.5/925 để cụm vòng tròn không bị cắt. Thẻ s03 đè lên 43.4vw (= 401.5/925) nên vẫn nằm sát dưới vòng tròn. |
 | Tiêu đề dòng 1 | căn giữa | đỉnh chữ hoa ≈ 39 | rộng ≈ 440 | "DEL CAMPO AL MERCADO" |
 | Tiêu đề dòng 2–3 | căn giữa | 75 và 102 | rộng ≈ 470 | Màu green-600 |
 
@@ -31,6 +31,7 @@ Một `h1` chứa cả hai dòng (hai `span`), để trình đọc màn hình đ
 - Thiết kế viết "PRODUCTORESPOR" (thiếu dấu cách) → đã sửa thành "PRODUCTORES POR".
 
 ## Tiêu chí đạt
-- [ ] `npm run compare -- s02`: tiêu đề lệch ≤ 8px, đúng 2 dòng xanh ở 1250px
+- [ ] 1920px và 1280px: ảnh chạm hai mép màn hình, không có lề trắng; tiêu đề không đè lên vòng tròn
+- [ ] Thẻ giới thiệu (s03) nằm ngay dưới cụm vòng tròn ở mọi bề rộng ≥ 1024px
 - [ ] Ảnh dùng `next/image` có `priority` (ảnh LCP)
 - [ ] Mobile 390px: chữ không đè lên ảnh, không tràn ngang
