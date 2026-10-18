@@ -30,7 +30,7 @@ export function Intro({ intro, audiences }: Props) {
         {/* Hai cột chữ */}
         <div className="lg:grid lg:grid-cols-[22.125rem_1fr] lg:pr-[4.25rem]">
           <div className="relative flex justify-center pb-6 text-center lg:h-[6.6rem] lg:pt-[1.15rem] lg:pb-0">
-            <Rosette className="absolute top-[-0.95rem] left-1/2 hidden h-[7.8rem] w-[7.2rem] -translate-x-[48%] text-[#d8dadf] lg:block" />
+            <Rosette className="absolute top-[-0.95rem] left-1/2 hidden size-[8rem] -translate-x-[48%] text-[#d8dadf] lg:block" />
             <h2
               id="intro-title"
               className="text-navy relative text-[1.25rem] leading-[1.25] font-semibold text-balance lg:max-w-[16rem] lg:text-[1.0625rem] lg:leading-[1.19rem]"
