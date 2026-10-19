@@ -109,7 +109,7 @@ export function CycleWheel({ cycle, steps }: Props) {
             );
           })}
           <circle r={R_CENTER} fill="#f2faff" stroke="#fff" strokeWidth="2" />
-          <text className="fill-navy font-display text-[15.5px] font-bold tracking-[0.02em] uppercase">
+          <text className="fill-navy font-sans text-[15.5px] font-bold tracking-[0.02em] uppercase">
             <textPath href="#cycle-start-arc">{cycle.startLabel} →</textPath>
           </text>
         </svg>
