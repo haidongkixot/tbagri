@@ -11,8 +11,8 @@ const R_CENTER = 148; // vòng tròn trắng ở giữa
 const A_IN = 180; // khoảng cách từ tâm tới cạnh trong của ô (12 cạnh)
 const A_OUT = 286; // khoảng cách từ tâm tới cạnh ngoài của ô
 const LABEL_R = 233; // bán kính đặt nhãn + icon
-const GAP_DEG = 1.6; // nửa khe hở giữa hai ô (độ)
-const NOTCH_DEG = 3.2; // độ nhô của mũi tên nối hai ô (độ)
+const GAP_DEG = 1.2; // nửa khe hở giữa hai ô (độ)
+const NOTCH_DEG = 6.5; // độ sâu của rãnh nhận và mũi tên nối sang ô kế tiếp
 // Màu ô chuyển dần từ xanh lá nhạt sang trắng theo thứ tự các bước (đo từ thiết kế)
 const FILLS = [
   "#c2e0b8",
@@ -33,7 +33,7 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 const pt = (r: number, deg: number) => [r * Math.cos(rad(deg)), r * Math.sin(rad(deg))] as const;
 const f = (n: number) => Math.round(n * 10) / 10;
 
-/** Đường bao một ô hình thang của vòng 12 cạnh, có mũi tên ở cạnh trước và rãnh ở cạnh sau. */
+/** Mỗi ô là một mắt xích: mũi tên nhô vào ô sau, rãnh trước nhận mũi tên của ô trước. */
 function segmentPath(centerDeg: number) {
   const half = 15 - GAP_DEG;
   const t = centerDeg - half;
