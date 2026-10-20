@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { PageContent } from "@/server/content";
 import { SectionMarker } from "@/components/ui/SectionMarker";
 
@@ -11,8 +12,8 @@ const R_CENTER = 148; // vòng tròn trắng ở giữa
 const A_IN = 180; // khoảng cách từ tâm tới cạnh trong của ô (12 cạnh)
 const A_OUT = 286; // khoảng cách từ tâm tới cạnh ngoài của ô
 const LABEL_R = 233; // bán kính đặt nhãn + icon
-const GAP_DEG = 1.2; // nửa khe hở giữa hai ô (độ)
-const NOTCH_DEG = 6.5; // độ sâu của rãnh nhận và mũi tên nối sang ô kế tiếp
+const GAP_DEG = 1.6; // nửa khe hở giữa hai ô (độ)
+const NOTCH_DEG = 3.2; // độ nhô của mũi tên nối hai ô (độ)
 // Màu ô chuyển dần từ xanh lá nhạt sang trắng theo thứ tự các bước (đo từ thiết kế)
 const FILLS = [
   "#c2e0b8",
@@ -33,7 +34,7 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 const pt = (r: number, deg: number) => [r * Math.cos(rad(deg)), r * Math.sin(rad(deg))] as const;
 const f = (n: number) => Math.round(n * 10) / 10;
 
-/** Mỗi ô là một mắt xích: mũi tên nhô vào ô sau, rãnh trước nhận mũi tên của ô trước. */
+/** Đường bao một ô hình thang của vòng 12 cạnh, có mũi tên ở cạnh trước và rãnh ở cạnh sau. */
 function segmentPath(centerDeg: number) {
   const half = 15 - GAP_DEG;
   const t = centerDeg - half;
@@ -139,7 +140,7 @@ export function CycleWheel({ cycle, steps }: Props) {
               <li
                 key={s.label}
                 tabIndex={0}
-                className="cycle-wheel-step absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
+                className="absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
                 style={{
                   left: `${((x + SIZE / 2) / SIZE) * 100}%`,
                   top: `${((y + SIZE / 2) / SIZE) * 100}%`,
@@ -153,7 +154,7 @@ export function CycleWheel({ cycle, steps }: Props) {
                   alt=""
                   width={116}
                   height={92}
-                  className="cycle-wheel-step-icon mt-[0.35rem] h-[2.875rem] w-auto"
+                  className="mt-[0.35rem] h-[2.875rem] w-auto"
                 />
               </li>
             );
@@ -176,14 +177,14 @@ export function CycleWheel({ cycle, steps }: Props) {
               key={s.label}
               tabIndex={0}
               className="cycle-wheel-mobile-step text-navy flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-[0.9375rem]"
-              style={{ background: FILLS[i % FILLS.length] }}
+              style={{ "--cycle-step-fill": FILLS[i % FILLS.length] } as CSSProperties}
             >
               <Image
                 src={s.icon}
                 alt=""
                 width={116}
                 height={92}
-                className="cycle-wheel-step-icon h-11 w-auto"
+                className="h-11 w-auto"
               />
               <span>
                 {i + 1}. {s.label}

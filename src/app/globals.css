@@ -183,35 +183,20 @@ body {
   background-position: center top;
 }
 
-/* The wheel stays still; only the active step and its icon respond to hover/focus. */
+/* Keep the wheel geometry and icons still; hover changes only the step fill. */
 .cycle-wheel-segment > path:last-child {
-  transition: filter 180ms ease;
+  transition: fill 180ms ease;
 }
 .cycle-wheel-segment:hover > path:last-child {
-  filter: brightness(1.08);
+  fill: #a8d891;
 }
-.cycle-wheel-step-icon {
-  transform-origin: center;
+.cycle-wheel-mobile-step {
+  background-color: var(--cycle-step-fill);
+  transition: background-color 180ms ease;
 }
-.cycle-wheel-step:hover .cycle-wheel-step-icon,
-.cycle-wheel-step:focus-visible .cycle-wheel-step-icon,
-.cycle-wheel-mobile-step:hover .cycle-wheel-step-icon,
-.cycle-wheel-mobile-step:focus-visible .cycle-wheel-step-icon {
-  animation: cycle-wheel-item-roll 650ms cubic-bezier(0.2, 0.75, 0.35, 1);
-}
-@keyframes cycle-wheel-item-roll {
-  0% {
-    transform: rotate(0deg) translateY(0);
-  }
-  30% {
-    transform: rotate(108deg) translateY(-3px);
-  }
-  60% {
-    transform: rotate(216deg) translateY(0);
-  }
-  100% {
-    transform: rotate(360deg) translateY(0);
-  }
+.cycle-wheel-mobile-step:hover,
+.cycle-wheel-mobile-step:focus-visible {
+  background-color: #a8d891;
 }
 
 /* Mũi tên nét đứt của dây chuyền sau thu hoạch (s10): nét 8.5px, hở 5.5px, dày 2px */
