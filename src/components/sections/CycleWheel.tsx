@@ -98,7 +98,7 @@ export function CycleWheel({ cycle, steps }: Props) {
               <g key={i} className="cycle-wheel-segment">
                 <path
                   d={segmentPath(c)}
-                  transform={`translate(${f(pt(4, c)[0])} ${f(pt(4, c)[1])}) scale(1.045)`}
+                  transform={`translate(${f(pt(2, c)[0])} ${f(pt(2, c)[1])}) scale(1.02)`}
                   fill="none"
                   stroke="#fff"
                   strokeWidth="2"
