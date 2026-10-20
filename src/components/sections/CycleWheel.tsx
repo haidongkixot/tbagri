@@ -140,7 +140,7 @@ export function CycleWheel({ cycle, steps }: Props) {
               <li
                 key={s.label}
                 tabIndex={0}
-                className="cycle-wheel-step absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
+                className="pointer-events-none absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
                 style={{
                   left: `${((x + SIZE / 2) / SIZE) * 100}%`,
                   top: `${((y + SIZE / 2) / SIZE) * 100}%`,
