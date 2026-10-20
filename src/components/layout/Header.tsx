@@ -66,7 +66,10 @@ export function Header({
               </li>
             ))}
           </ul>
-          <Link
+          {/* Dùng <a> chứ không dùng <Link>: layout gốc nằm trong [locale] nên đổi ngôn ngữ
+              phải tải lại cả trang, nếu không Next giữ lại cây DOM của ngôn ngữ cũ
+              (thừa header/footer, <html lang> không đổi). */}
+          <a
             href={switchHref}
             hrefLang={other}
             lang={other}
@@ -75,7 +78,7 @@ export function Header({
             title={t.a11y.switchTo}
           >
             <Flag locale={other} className="h-[0.9375rem] w-[1.375rem] shadow-sm" />
-          </Link>
+          </a>
         </nav>
 
         <MobileMenu

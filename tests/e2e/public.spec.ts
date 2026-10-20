@@ -15,6 +15,25 @@ test.describe("Trang công khai", () => {
     await expect(page.locator("h1")).toContainText(/from field to market/i);
   });
 
+  // Layout gốc nằm trong [locale] nên nút đổi ngôn ngữ phải tải lại cả trang.
+  // Nếu dùng <Link>, Next giữ lại cây DOM của ngôn ngữ cũ → thừa header/footer và
+  // thanh trên cùng không khớp nội dung bên dưới.
+  test("bấm nút đổi ngôn ngữ: chỉ còn một bộ giao diện, đúng ngôn ngữ đã chọn", async ({
+    page,
+    isMobile,
+  }) => {
+    await page.goto("/es");
+    if (isMobile) await page.getByRole("button", { name: /abrir menú/i }).click();
+    await page.getByRole("link", { name: /ver en inglés/i }).click();
+    await page.waitForURL(/\/en$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.locator("header")).toHaveCount(1);
+    await expect(page.locator("footer")).toHaveCount(1);
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator("header")).toContainText("Home");
+    await expect(page.locator("header")).not.toContainText("Inicio");
+  });
+
   test.describe("trình duyệt tiếng Anh", () => {
     test.use({ locale: "en-US" });
     test("/ chuyển sang /en theo Accept-Language", async ({ page }) => {

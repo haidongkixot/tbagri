@@ -79,16 +79,16 @@ export function MobileMenu({
             </li>
           ))}
         </ul>
-        <Link
+        {/* <a> chứ không phải <Link>: đổi ngôn ngữ phải tải lại cả trang (xem ghi chú ở Header). */}
+        <a
           href={switchHref}
           hrefLang={other}
           lang={other}
-          onClick={() => setOpen(false)}
           className="border-green-pale text-navy mt-6 inline-flex items-center gap-3 rounded-lg border px-4 py-3"
         >
           <Flag locale={other} className="h-4 w-6" />
           {labels.switchTo}
-        </Link>
+        </a>
       </div>
     </div>
   );

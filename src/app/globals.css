@@ -14,6 +14,7 @@
   --color-green-icon: #5aab3f;
   --color-green-pale: #cdebc5;
   --color-green-card: #daebc1;
+  --color-green-hover: #a8d891; /* nền ô vòng s04 khi trỏ chuột (chữ navy vẫn đủ tương phản) */
   --color-mint: #d6fdd0;
   --color-sky-50: #eff9fe;
   --color-sky-100: #dff1fd;
@@ -204,6 +205,21 @@ body {
 /* Ảnh minh họa có nền trắng (dây chuyền sau thu hoạch) hoà vào nền */
 @utility img-multiply {
   mix-blend-mode: multiply;
+}
+
+/* s04 — vòng 12 bước: đổi màu nền ô khi trỏ chuột (nhãn để pointer-events:none
+   nên trỏ vào chữ cũng tính là trỏ vào ô bên dưới). */
+.cycle-step-fill,
+.cycle-step-card {
+  transition:
+    fill 0.2s ease-out,
+    background-color 0.2s ease-out;
+}
+.cycle-step:hover .cycle-step-fill {
+  fill: var(--color-green-hover);
+}
+.cycle-step-card:hover {
+  background-color: var(--color-green-hover) !important;
 }
 
 :focus-visible {

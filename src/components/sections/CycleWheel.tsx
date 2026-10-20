@@ -5,14 +5,20 @@ import { SectionMarker } from "@/components/ui/SectionMarker";
 type Props = { cycle: PageContent["cycle"]; steps: PageContent["cycleSteps"] };
 
 // Hình học vòng tròn (đơn vị px thiết kế, gốc toạ độ ở tâm vòng).
+// Số đo lấy từ ảnh thiết kế s04 rồi quy về đĩa bán kính 333.
 const SIZE = 666; // đường kính đĩa xanh ngoài
 const R_DISC = 333;
-const R_CENTER = 148; // vòng tròn trắng ở giữa
-const A_IN = 180; // khoảng cách từ tâm tới cạnh trong của ô (12 cạnh)
-const A_OUT = 286; // khoảng cách từ tâm tới cạnh ngoài của ô
+const R_CENTER = 146; // vòng tròn trắng ở giữa
+const A_IN = 180; // cạnh trong của ô (cung tròn)
+const A_OUT = 285; // cạnh ngoài của ô (cung tròn)
 const LABEL_R = 233; // bán kính đặt nhãn + icon
-const GAP_DEG = 1.6; // nửa khe hở giữa hai ô (độ)
-const NOTCH_DEG = 3.2; // độ nhô của mũi tên nối hai ô (độ)
+const GAP_HALF = 16.5; // nửa khe hở giữa hai ô, tính theo px (khe rộng đều ở mọi bán kính)
+const OUTLINE_OFF = 11.5; // viền trắng nằm cách mép ô bấy nhiêu px
+// Mũi tên: cạnh bên là đường thẳng hướng tâm, chỉ nhô ra một "gai" nhọn ở giữa bán kính.
+const BARB_D = 11; // độ nhô của gai (px, theo chiều kim đồng hồ)
+const BARB_H = 7; // nửa chiều cao của gai theo hướng bán kính (px)
+const OUT_BARB_D = 19; // gai của đường viền trắng nhô xa hơn (do viền nằm ngoài ô)
+const OUT_BARB_H = 9;
 // Màu ô chuyển dần từ xanh lá nhạt sang trắng theo thứ tự các bước (đo từ thiết kế)
 const FILLS = [
   "#c2e0b8",
@@ -33,22 +39,48 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 const pt = (r: number, deg: number) => [r * Math.cos(rad(deg)), r * Math.sin(rad(deg))] as const;
 const f = (n: number) => Math.round(n * 10) / 10;
 
-/** Đường bao một ô hình thang của vòng 12 cạnh, có mũi tên ở cạnh trước và rãnh ở cạnh sau. */
-function segmentPath(centerDeg: number) {
-  const half = 15 - GAP_DEG;
-  const t = centerDeg - half;
-  const l = centerDeg + half;
-  const k = 1 / Math.cos(rad(half));
-  const mid = (A_IN + A_OUT) / 2;
-  const P = [
-    pt(A_IN * k, t),
-    pt(mid, t + NOTCH_DEG), // rãnh nhận mũi tên của ô trước
-    pt(A_OUT * k, t),
-    pt(A_OUT * k, l),
-    pt(mid, l + NOTCH_DEG), // mũi tên chỉ sang ô kế tiếp
-    pt(A_IN * k, l),
-  ];
-  return `M${P.map(([x, y]) => `${f(x)} ${f(y)}`).join(" L")} Z`;
+/** Đổi khoảng cách theo px ở bán kính r thành góc (độ). */
+const angle = (px: number, r: number) => ((px / r) * 180) / Math.PI;
+const L = ([x, y]: readonly [number, number]) => `L${f(x)} ${f(y)}`;
+
+/**
+ * Đường bao một ô của vòng bước, dựng đúng theo ảnh thiết kế:
+ * cạnh trong và cạnh ngoài là cung tròn; hai cạnh bên là đường thẳng hướng tâm,
+ * ở giữa bán kính nhô ra một gai nhọn theo chiều kim đồng hồ. Gai của ô trước
+ * khớp vào rãnh của ô sau nên 12 ô nối thành một chuỗi mũi tên.
+ *
+ * @param gapHalf nửa khe hở tính theo px. Giảm giá trị này để có đường viền bao ngoài ô.
+ */
+function ringPath(
+  centerDeg: number,
+  rIn: number,
+  rOut: number,
+  gapHalf: number,
+  barbD: number,
+  barbH: number,
+) {
+  const c = centerDeg;
+  const rMid = (rIn + rOut) / 2;
+  // Khe hở rộng đều theo px nên nửa góc của ô nhỏ dần khi bán kính lớn dần.
+  const h = (r: number) => 15 - angle(gapHalf, r);
+  const nd = angle(barbD, rMid); // đỉnh gai lệch theo chiều kim đồng hồ
+  const r1 = rMid - barbH;
+  const r2 = rMid + barbH;
+  const start = pt(rIn, c - h(rIn));
+  return [
+    `M${f(start[0])} ${f(start[1])}`,
+    L(pt(r1, c - h(r1))), // cạnh sau: thẳng tới chân gai
+    L(pt(rMid, c - h(rMid) + nd)), // rãnh nhận gai của ô trước
+    L(pt(r2, c - h(r2))),
+    L(pt(rOut, c - h(rOut))),
+    `A${f(rOut)} ${f(rOut)} 0 0 1 ${f(pt(rOut, c + h(rOut))[0])} ${f(pt(rOut, c + h(rOut))[1])}`,
+    L(pt(r2, c + h(r2))), // cạnh trước
+    L(pt(rMid, c + h(rMid) + nd)), // gai chỉ sang ô kế tiếp
+    L(pt(r1, c + h(r1))),
+    L(pt(rIn, c + h(rIn))),
+    `A${f(rIn)} ${f(rIn)} 0 0 0 ${f(start[0])} ${f(start[1])}`,
+    "Z",
+  ].join(" ");
 }
 
 /** Cung cho chữ "INICIO DE CICLO" chạy theo vòng ngoài. */
@@ -87,28 +119,40 @@ export function CycleWheel({ cycle, steps }: Props) {
           aria-hidden
         >
           <defs>
-            <path id="cycle-start-arc" d={arcPath(300, -125, -80)} />
+            <path id="cycle-start-arc" d={arcPath(312, -128, -76)} />
+            <radialGradient id="cycle-disc" cx="50%" cy="50%" r="50%">
+              <stop offset="0.45" stopColor="#a8e2fd" />
+              <stop offset="1" stopColor="#c8eeff" />
+            </radialGradient>
           </defs>
-          <circle r={R_DISC} fill="#bee8fb" opacity="0.85" />
-          <circle r={A_IN - 2} fill="#b4e6fd" />
-          {steps.map((_, i) => {
+          <circle r={R_DISC} fill="url(#cycle-disc)" />
+          {steps.map((s, i) => {
             const c = startDeg + step * (i + 0.5);
             return (
-              <g key={i}>
+              <g key={s.label} className="cycle-step">
                 <path
-                  d={segmentPath(c)}
-                  transform={`translate(${f(pt(4, c)[0])} ${f(pt(4, c)[1])}) scale(1.045)`}
+                  d={ringPath(
+                    c,
+                    A_IN - OUTLINE_OFF,
+                    A_OUT + OUTLINE_OFF,
+                    GAP_HALF - OUTLINE_OFF,
+                    OUT_BARB_D,
+                    OUT_BARB_H,
+                  )}
                   fill="none"
                   stroke="#fff"
-                  strokeWidth="2"
+                  strokeWidth="1.7"
                   strokeLinejoin="round"
-                  opacity="0.9"
                 />
-                <path d={segmentPath(c)} fill={FILLS[i % FILLS.length]} />
+                <path
+                  className="cycle-step-fill"
+                  d={ringPath(c, A_IN, A_OUT, GAP_HALF, BARB_D, BARB_H)}
+                  fill={FILLS[i % FILLS.length]}
+                />
               </g>
             );
           })}
-          <circle r={R_CENTER} fill="#f2faff" stroke="#fff" strokeWidth="2" />
+          <circle r={R_CENTER} fill="#fbfeff" />
           <text className="fill-navy font-display text-[15.5px] font-bold tracking-[0.02em] uppercase">
             <textPath href="#cycle-start-arc">{cycle.startLabel} →</textPath>
           </text>
@@ -138,7 +182,8 @@ export function CycleWheel({ cycle, steps }: Props) {
             return (
               <li
                 key={s.label}
-                className="absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
+                // Nhãn không nhận chuột để trỏ chuột vào chữ vẫn tính là trỏ vào ô dưới nó.
+                className="pointer-events-none absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
                 style={{
                   left: `${((x + SIZE / 2) / SIZE) * 100}%`,
                   top: `${((y + SIZE / 2) / SIZE) * 100}%`,
@@ -173,7 +218,7 @@ export function CycleWheel({ cycle, steps }: Props) {
           {steps.map((s, i) => (
             <li
               key={s.label}
-              className="text-navy flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-[0.9375rem]"
+              className="cycle-step-card text-navy flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-[0.9375rem]"
               style={{ background: FILLS[i % FILLS.length] }}
             >
               <Image src={s.icon} alt="" width={116} height={92} className="h-11 w-auto" />
