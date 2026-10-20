@@ -94,7 +94,7 @@ export function CycleWheel({ cycle, steps }: Props) {
           {steps.map((_, i) => {
             const c = startDeg + step * (i + 0.5);
             return (
-              <g key={i}>
+              <g key={i} className="cycle-wheel-segment">
                 <path
                   d={segmentPath(c)}
                   transform={`translate(${f(pt(4, c)[0])} ${f(pt(4, c)[1])}) scale(1.045)`}
@@ -138,7 +138,8 @@ export function CycleWheel({ cycle, steps }: Props) {
             return (
               <li
                 key={s.label}
-                className="absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
+                tabIndex={0}
+                className="cycle-wheel-step absolute flex w-[7rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center text-center"
                 style={{
                   left: `${((x + SIZE / 2) / SIZE) * 100}%`,
                   top: `${((y + SIZE / 2) / SIZE) * 100}%`,
@@ -152,7 +153,7 @@ export function CycleWheel({ cycle, steps }: Props) {
                   alt=""
                   width={116}
                   height={92}
-                  className="mt-[0.35rem] h-[2.875rem] w-auto"
+                  className="cycle-wheel-step-icon mt-[0.35rem] h-[2.875rem] w-auto"
                 />
               </li>
             );
@@ -173,10 +174,17 @@ export function CycleWheel({ cycle, steps }: Props) {
           {steps.map((s, i) => (
             <li
               key={s.label}
-              className="text-navy flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-[0.9375rem]"
+              tabIndex={0}
+              className="cycle-wheel-mobile-step text-navy flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-[0.9375rem]"
               style={{ background: FILLS[i % FILLS.length] }}
             >
-              <Image src={s.icon} alt="" width={116} height={92} className="h-11 w-auto" />
+              <Image
+                src={s.icon}
+                alt=""
+                width={116}
+                height={92}
+                className="cycle-wheel-step-icon h-11 w-auto"
+              />
               <span>
                 {i + 1}. {s.label}
               </span>
