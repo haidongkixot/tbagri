@@ -184,6 +184,9 @@ body {
 }
 
 /* Keep the wheel geometry and icons still; hover changes only the step fill. */
+.cycle-wheel-step {
+  pointer-events: none;
+}
 .cycle-wheel-segment > path:last-child {
   transition: fill 180ms ease;
 }
