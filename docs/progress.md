@@ -19,3 +19,9 @@ Mỗi lab xong thêm một dòng: lab · ngày · việc đã làm · cách ki�
 | 13 | Đăng nhập quản trị (scrypt + JWT cookie + giới hạn), tổng quan, bảng leads (lọc, tìm, phân trang, đổi trạng thái), xuất CSV, nhật ký; Suspense trong trang | thử chưa đăng nhập → bị chặn · sai/đúng mật khẩu · đổi trạng thái · CSV · đăng xuất · build ✓ |
 | 14 | CMS: cấu hình 27 khối sinh form + Zod, trình sửa (es/en, danh sách ↑↓✕, tải ảnh Blob/local, khôi phục), updateTag cập nhật ngay | thử sửa hero → trang đổi ngay · lỗi ô · tải tệp giả bị chặn · khôi phục ✓ |
 | 15 | Vitest (31 test hàm thuần), Playwright (18 test E2E trên build production, CSDL riêng), CI GitHub Actions, README deploy, release-check cập nhật — **Mốc 2: demo cuối** | `npm test` ✓ · `npm run test:e2e` ✓ · build ✓ |
+| 16 | **Lên production** (Vercel, `tbagri.vercel.app`): hero chạy hết bề ngang, `scripts/bootstrap.ts` chuẩn bị CSDL khi build, sửa preset Next.js (lỗi 404 cả trang); dựng lại vòng s04 đúng thiết kế (cung tròn + chuỗi mũi tên) kèm hover đổi nền ô; sửa nút đổi ngôn ngữ dùng `<a>` thay `<Link>` (trước đó DOM còn cả bộ giao diện ngôn ngữ cũ) | compare s04: 6.7% → 4.6% · `npm test` 31 ✓ · `npm run test:e2e` 20 ✓ (thêm 2 test đổi ngôn ngữ) · kiểm /es ↔ /en trên bản chạy thật ✓ |
+
+## Trạng thái hiện tại
+
+Xem `docs/STATUS.md` — nơi chạy, việc còn mở, và các quyết định kỹ thuật cần nhớ khi mở
+phiên Claude Code ở máy khác.

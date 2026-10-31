@@ -25,8 +25,9 @@ PGlite chỉ cho một tiến trình mở: tắt `npm run dev` trước khi ch�
 | `npm run admin:create` | Tạo/đặt lại tài khoản quản trị |
 
 ## Deploy lên Vercel
-1. Tạo project Vercel từ repo; **Build Command**: `npm run vercel-build`
-   (chạy `scripts/bootstrap.ts`: migrate → seed → tạo admin nếu có biến, rồi build).
+1. Tạo project Vercel từ repo; **Framework Preset**: Next.js — **Build Command**:
+   `npm run vercel-build` (chạy `scripts/bootstrap.ts`: migrate → seed → tạo admin nếu có biến,
+   rồi build). Preset để "Other" thì Vercel chỉ publish `public/` và cả trang báo 404.
 2. Storage → tạo **Neon Postgres** (biến `DATABASE_URL`) và **Blob** (biến `BLOB_READ_WRITE_TOKEN`).
 3. Environment Variables (Production): `SESSION_SECRET`, `IP_HASH_SALT`, `NEXT_PUBLIC_SITE_URL`
    (https://tên-miền), tùy chọn `RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_NOTIFY_FROM`.
@@ -37,6 +38,8 @@ PGlite chỉ cho một tiến trình mở: tắt `npm run dev` trước khi ch�
 5. Chạy `/release-check` trong Claude Code, sửa các mục ✗, rồi Promote to Production.
 
 ## Tài liệu
+- **`docs/STATUS.md` — trạng thái hiện tại: nơi chạy, việc còn mở, bẫy hay gặp. Đọc đầu tiên
+  khi mở một phiên làm việc mới.**
 - `CLAUDE.md` — quy ước làm việc với Claude Code (đọc trước khi sửa code).
 - `docs/PRD.md` — yêu cầu sản phẩm (4Ds). `docs/specs/*.md` — spec từng section/tính năng.
 - `docs/design/ref/*.jpg` — ảnh thiết kế gốc. `docs/progress.md` — nhật ký 15 lab.
