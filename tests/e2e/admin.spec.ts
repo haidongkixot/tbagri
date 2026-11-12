@@ -92,3 +92,84 @@ test.describe("Khu quản trị", () => {
     await expect(page.getByRole("alert").filter({ hasText: "ctaLabel.es" })).toBeVisible();
   });
 });
+
+// Đăng nhập luôn bị giới hạn 10 lần/15 phút cho mỗi IP: cả tệp này dùng tổng 8 lần.
+test.describe("Quản lý tài khoản quản trị", () => {
+  const editorEmail = `bientap.${Date.now()}@tbagri.test`;
+  const editorPassword = "BienTapMoi2026ok";
+
+  async function logout(page: Page) {
+    await page.locator("form button:has-text('Đăng xuất'):visible").last().click({ force: true });
+    await expect(page).toHaveURL(/\/admin\/login$/);
+  }
+
+  test("admin tạo tài khoản biên tập → người mới bắt buộc đổi mật khẩu tạm → không vào được quản lý tài khoản", async ({
+    page,
+  }) => {
+    await login(page);
+    await page.getByRole("link", { name: "Tài khoản quản trị" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Tài khoản quản trị" })).toBeVisible();
+
+    // Chính mình: không tự tắt/đặt lại được
+    const self = page.locator("tbody tr", { hasText: EMAIL });
+    await expect(self.getByRole("button", { name: `Tắt tài khoản ${EMAIL}` })).toBeDisabled();
+
+    // Email sai → lỗi đúng ô, không tạo
+    await page.fill("#new-email", "khong-hop-le");
+    await page.fill("#new-name", "Biên tập E2E");
+    await page.getByRole("button", { name: "Tạo tài khoản" }).click();
+    await expect(page.locator("#new-email-err")).toContainText("không hợp lệ");
+
+    await page.fill("#new-email", editorEmail);
+    await page.selectOption("#new-role", "editor");
+    await page.getByRole("button", { name: "Tạo tài khoản" }).click();
+    const temp = (await page.getByTestId("temp-password").textContent())?.trim() ?? "";
+    expect(temp).toMatch(/^[A-Za-z2-9]{20}$/);
+    await expect(page.locator("tbody tr", { hasText: editorEmail })).toContainText(
+      "chờ đổi mật khẩu tạm",
+    );
+
+    // Email trùng → báo lỗi
+    await page.fill("#new-email", editorEmail);
+    await page.fill("#new-name", "Trùng");
+    await page.getByRole("button", { name: "Tạo tài khoản" }).click();
+    await expect(page.locator("#new-email-err")).toContainText("đã có tài khoản");
+    await logout(page);
+
+    // Người mới đăng nhập bằng mật khẩu tạm → bị giữ ở trang đổi mật khẩu
+    await page.fill("#email", editorEmail);
+    await page.fill("#password", temp);
+    await page.click("button[type=submit]");
+    await page.waitForURL(/\/admin\/account$/);
+    await expect(page.getByRole("alert").filter({ hasText: "mật khẩu tạm" })).toBeVisible();
+    await page.goto("/admin/leads");
+    await expect(page).toHaveURL(/\/admin\/account$/);
+
+    await page.fill("#pw-current", temp);
+    await page.fill("#pw-next", editorPassword);
+    await page.fill("#pw-confirm", editorPassword);
+    await page.getByRole("button", { name: "Đổi mật khẩu" }).click();
+    await page.waitForURL(/\/admin$/);
+    await expect(page.getByRole("heading", { level: 1, name: /Xin chào/ })).toBeVisible();
+
+    // Biên tập: không thấy menu và không vào được trang quản lý tài khoản
+    await expect(page.getByRole("link", { name: "Tài khoản quản trị" })).toHaveCount(0);
+    await page.goto("/admin/users");
+    await expect(page).toHaveURL(/\/admin\?error=forbidden$/);
+    await logout(page);
+  });
+
+  test("admin tắt tài khoản → người đó không đăng nhập được nữa", async ({ page }) => {
+    await login(page);
+    await page.goto("/admin/users");
+    const row = page.locator("tbody tr", { hasText: editorEmail });
+    await row.getByRole("button", { name: `Tắt tài khoản ${editorEmail}` }).click();
+    await expect(row).toContainText("Đã tắt");
+    await logout(page);
+
+    await page.fill("#email", editorEmail);
+    await page.fill("#password", editorPassword);
+    await page.click("button[type=submit]");
+    await expect(page.locator("p[role=alert]")).toContainText("không đúng");
+  });
+});

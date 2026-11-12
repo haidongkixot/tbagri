@@ -8,14 +8,17 @@ const ITEMS = [
   { href: "/admin/leads", label: "Khách hàng tiềm năng" },
   { href: "/admin/content", label: "Nội dung trang" },
 ];
+/** Chỉ vai trò admin thấy (trang cũng tự chặn bằng requireAdmin({ role: "admin" })). */
+const ADMIN_ITEMS = [{ href: "/admin/users", label: "Tài khoản quản trị" }];
 
 /** Menu bên trái khu quản trị; mục đang mở được đánh dấu (aria-current). */
-export function AdminNav() {
+export function AdminNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
+  const items = isAdmin ? [...ITEMS, ...ADMIN_ITEMS] : ITEMS;
   return (
     <nav aria-label="Quản trị" className="flex gap-1 overflow-x-auto lg:flex-col">
-      {ITEMS.map((it) => {
-        const active = it.exact ? pathname === it.href : pathname.startsWith(it.href);
+      {items.map((it) => {
+        const active = "exact" in it ? pathname === it.href : pathname.startsWith(it.href);
         return (
           <Link
             key={it.href}

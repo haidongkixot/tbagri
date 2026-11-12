@@ -58,3 +58,5 @@ public/uploads/
 # Playwright
 /test-results/
 /playwright-report/
+# Thư mục tạm của Playwright MCP (Claude Code điều khiển trình duyệt)
+/.playwright-mcp/

@@ -65,17 +65,28 @@ export async function readSession(): Promise<Session | null> {
 
 /**
  * Bắt buộc đăng nhập. Dùng ở đầu MỌI trang/Server Action/Route Handler quản trị.
- * `role: "admin"` cho thao tác chỉ admin được làm (ví dụ quản lý tài khoản).
+ * - `role: "admin"` cho thao tác chỉ admin được làm (quản lý tài khoản).
+ * - Tài khoản đang dùng mật khẩu tạm bị đưa tới trang đổi mật khẩu, trừ chỗ gọi với
+ *   `allowPasswordChange: true` (chính trang/action đổi mật khẩu).
  */
-export async function requireAdmin(opts: { role?: AdminRole } = {}): Promise<Session> {
+export async function requireAdmin(
+  opts: { role?: AdminRole; allowPasswordChange?: boolean } = {},
+): Promise<Session> {
   const session = await readSession();
   if (!session) redirect("/admin/login");
   const db = await getDb();
   const [user] = await db
-    .select({ active: adminUsers.active, role: adminUsers.role })
+    .select({
+      active: adminUsers.active,
+      role: adminUsers.role,
+      name: adminUsers.name,
+      mustChangePassword: adminUsers.mustChangePassword,
+    })
     .from(adminUsers)
     .where(eq(adminUsers.id, session.userId));
   if (!user?.active) redirect("/admin/login");
+  if (user.mustChangePassword && !opts.allowPasswordChange) redirect("/admin/account");
   if (opts.role === "admin" && user.role !== "admin") redirect("/admin?error=forbidden");
-  return { ...session, role: user.role };
+  // Tên/vai trò lấy từ CSDL: admin đổi cho người khác thì có hiệu lực ngay, không chờ phiên mới
+  return { ...session, name: user.name, role: user.role };
 }

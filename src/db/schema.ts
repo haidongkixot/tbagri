@@ -59,6 +59,8 @@ export const adminUsers = pgTable("admin_users", {
   passwordHash: text("password_hash").notNull(),
   role: text("role").$type<AdminRole>().notNull().default("editor"),
   active: boolean("active").notNull().default(true),
+  /** Mật khẩu tạm (tài khoản mới / vừa đặt lại) → bắt buộc đổi ở lần đăng nhập kế tiếp */
+  mustChangePassword: boolean("must_change_password").notNull().default(false),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

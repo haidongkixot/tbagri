@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { hashPassword, isStrongPassword, verifyPassword } from "@/server/auth/password";
+import {
+  generatePassword,
+  hashPassword,
+  isStrongPassword,
+  verifyPassword,
+} from "@/server/auth/password";
 
 describe("mật khẩu scrypt", () => {
   it("băm rồi xác minh đúng; sai mật khẩu → false", async () => {
@@ -18,5 +23,14 @@ describe("mật khẩu scrypt", () => {
     expect(isStrongPassword("short1")).toBe(false);
     expect(isStrongPassword("onlylettersxx")).toBe(false);
     expect(isStrongPassword("Thaibinh2026demo")).toBe(true);
+  });
+  it("generatePassword: 20 ký tự, đủ mạnh, không có ký tự dễ nhầm, mỗi lần khác nhau", () => {
+    const list = Array.from({ length: 200 }, () => generatePassword());
+    for (const pw of list) {
+      expect(pw).toHaveLength(20);
+      expect(isStrongPassword(pw)).toBe(true);
+      expect(pw).not.toMatch(/[0O1lI]/);
+    }
+    expect(new Set(list).size).toBe(list.length);
   });
 });

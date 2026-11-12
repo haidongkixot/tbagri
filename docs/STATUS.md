@@ -1,6 +1,6 @@
 # Trạng thái dự án TBAgri Web
 
-> Cập nhật: 2026-11-01 · Commit: `1566506` (`main`) · Chạy thật: **https://tbagri.vercel.app**
+> Cập nhật: 2026-11-12 (lab 17 — quản lý tài khoản quản trị) · Chạy thật: **https://tbagri.vercel.app**
 > Tài liệu này để mở một phiên Claude Code mới ở máy khác mà không cần đọc lại lịch sử chat.
 > Đọc cùng với `CLAUDE.md` (quy ước bắt buộc), `docs/PRD.md` (yêu cầu), `docs/progress.md` (nhật ký lab).
 
@@ -20,9 +20,9 @@ Kho mã: `github.com/haidongkixot/tbagri` · nhánh chính `main`.
 | Tên miền | `tbagri.vercel.app` (chưa gắn tên miền riêng) |
 | Vercel project | `tbagri` · `prj_qIYeTMwa7adkhyIh5soFyl0ePZQR` |
 | Vercel team | `haidongkixots-projects` · `team_wbKguqX6Wj8eVKG1K332eQFD` |
-| Bản deploy hiện tại | `dpl_BQ6UeUzJKLt2SZiFgRWamAY1H54U` — commit `1566506`, READY |
+| Bản deploy hiện tại | Xem Vercel → project `tbagri` → Deployments (mỗi push `main` tự deploy production) |
 | Framework Preset | **Next.js** (đã đặt đúng, xem mục 6) |
-| Build Command | `npm run vercel-build` → `scripts/bootstrap.ts` (migrate → seed → tạo admin nếu có biến) rồi `next build` |
+| Build Command | `npm run vercel-build` → `scripts/bootstrap.ts` (migrate → seed → 3 admin có sẵn → tạo admin nếu có biến) rồi `next build` |
 | CSDL | Neon Postgres qua biến `DATABASE_URL` |
 | Ảnh tải lên | Vercel Blob qua `BLOB_READ_WRITE_TOKEN` |
 
@@ -40,8 +40,9 @@ deploy nhầm vào đó thì trang thật không đổi.
 | Email thông báo lead (Resend) | ⚠️ tùy chọn | Chỉ chạy khi có `RESEND_API_KEY`; chưa đặt trên production |
 | Đăng nhập quản trị | ⚠️ **chặn** | Thiếu `SESSION_SECRET` trên production — xem mục 5 |
 | Bảng leads, xuất CSV, nhật ký | ✅ xong | Nằm sau đăng nhập |
+| Quản lý tài khoản quản trị, đổi mật khẩu | ✅ xong (lab 17) | `/admin/users` (chỉ admin), `/admin/account`; spec `docs/specs/admin-users.md` |
 | CMS sửa nội dung (27 khối) | ✅ xong | Nằm sau đăng nhập |
-| Test | ✅ 31 unit (Vitest) + 20 e2e (Playwright) | CI GitHub Actions chạy đủ trên mỗi push `main` và PR |
+| Test | ✅ 38 unit (Vitest) + 22 e2e (Playwright) | CI GitHub Actions chạy đủ trên mỗi push `main` và PR |
 
 ## 4. Bắt đầu một phiên ở máy khác
 
@@ -80,10 +81,11 @@ Lệnh hay dùng: `npm run typecheck` · `lint` · `format` · `test` · `test:e
    *Kết nối Vercel MCP hiện tại không có quyền đọc/ghi biến môi trường (403), nên trạng thái
    thật của hai biến này chưa kiểm chứng được từ phiên Claude Code — hãy thử đăng nhập
    `/admin` để biết.*
-2. **Tài khoản quản trị đầu tiên.** Tạo bằng cách thêm tạm `ADMIN_EMAIL`, `ADMIN_PASSWORD`
-   (≥ 12 ký tự, có chữ và số), `ADMIN_NAME` vào Environment Variables rồi deploy một lần —
-   `scripts/bootstrap.ts` sẽ tạo tài khoản. Sau đó **xóa `ADMIN_PASSWORD`** và đổi mật khẩu
-   khi đăng nhập lần đầu.
+2. **Tài khoản quản trị.** Bước build tạo sẵn `admin1@tbagri.cu`, `admin2@tbagri.cu`,
+   `admin3@tbagri.cu` (`scripts/seed-admins.ts`, mật khẩu tạm đã gửi chủ dự án, bắt buộc đổi ở lần
+   đăng nhập đầu). Thêm người, đổi vai trò, tắt, đặt lại mật khẩu: trang `/admin/users`.
+   `npm run admin:create` chỉ còn dùng khi mất hết quyền admin. Nếu `ADMIN_PASSWORD` còn trên
+   Vercel thì **xóa đi** — mỗi lần build nó đặt lại mật khẩu tài khoản `ADMIN_EMAIL`.
 3. **Nhánh `fix/ui-alignment-review`** (9 commit, chưa gộp) — việc của một agent khác, chỉ đổi
    CSS hover và căn viền vòng s04. Phần hover đã làm lại trong `main` nên nhánh này **xóa được**.
 4. **Tên miền riêng** — chưa gắn, đang dùng `tbagri.vercel.app`.
@@ -132,5 +134,5 @@ Số đo nằm ở đầu tệp dưới dạng hằng số có chú thích — s
 
 | Nhánh | Trạng thái |
 |---|---|
-| `main` | `1566506` — đang chạy trên production |
+| `main` | Nhánh chạy production (push là Vercel tự deploy) |
 | `fix/ui-alignment-review` | `f3502d8` — chưa gộp, không còn cần (xem mục 5.3) |

@@ -1,4 +1,4 @@
-import type { LeadStatus } from "@/db/schema";
+import type { AdminRole, LeadStatus } from "@/db/schema";
 import type { Interest, Segment } from "@/lib/lead";
 
 /** Nhãn tiếng Việt cho giao diện quản trị (đội Marcomdi). */
@@ -11,6 +11,14 @@ export const STATUS_STYLE: Record<LeadStatus, string> = {
   nuevo: "bg-green/15 text-green-600",
   contactado: "bg-sky-100 text-navy",
   cerrado: "bg-ink/5 text-ink/60",
+};
+export const ROLE_LABEL: Record<AdminRole, string> = {
+  admin: "Admin",
+  editor: "Biên tập",
+};
+export const ROLE_HELP: Record<AdminRole, string> = {
+  admin: "Toàn quyền, kể cả quản lý tài khoản",
+  editor: "Xem khách hàng tiềm năng và sửa nội dung trang",
 };
 export const SEGMENT_LABEL: Record<Segment, string> = {
   agricultor: "Nông dân",

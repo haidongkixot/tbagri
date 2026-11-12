@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { ROLE_LABEL } from "../labels";
 import { logout } from "@/server/actions/auth";
 import { requireAdmin } from "@/server/auth/session";
 
@@ -28,7 +30,7 @@ export default function PanelLayout({ children }: LayoutProps<"/admin">) {
         <div className="mt-4 lg:mt-8">
           {/* usePathname() là dữ liệu theo yêu cầu (URL) → cần Suspense ở route động như /admin/content/[key] */}
           <Suspense fallback={null}>
-            <AdminNav />
+            <Nav />
           </Suspense>
         </div>
         <Suspense fallback={null}>
@@ -42,22 +44,37 @@ export default function PanelLayout({ children }: LayoutProps<"/admin">) {
   );
 }
 
+// Khung dùng allowPasswordChange: trang đổi mật khẩu cũng nằm trong khung này — nếu khung tự
+// chuyển hướng tới /admin/account thì trang đó sẽ chuyển hướng vòng mãi.
+async function Nav() {
+  const s = await requireAdmin({ allowPasswordChange: true });
+  return <AdminNav isAdmin={s.role === "admin"} />;
+}
+
 async function UserBox({ className = "" }: { className?: string }) {
-  const s = await requireAdmin();
+  const s = await requireAdmin({ allowPasswordChange: true });
   return (
     <div className={`text-sm text-white ${className}`}>
       <p className="font-semibold">{s.name}</p>
       <p className="text-white/70">
-        {s.email} · {s.role === "admin" ? "Admin" : "Biên tập"}
+        {s.email} · {ROLE_LABEL[s.role]}
       </p>
-      <form action={logout} className="mt-2">
-        <button
-          type="submit"
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Link
+          href="/admin/account"
           className="rounded-md border border-white/40 px-3 py-1.5 hover:bg-white/10"
         >
-          Đăng xuất
-        </button>
-      </form>
+          Đổi mật khẩu
+        </Link>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="rounded-md border border-white/40 px-3 py-1.5 hover:bg-white/10"
+          >
+            Đăng xuất
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

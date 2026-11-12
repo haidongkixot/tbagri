@@ -4,6 +4,7 @@
  *
  * 1. migrate — tạo bảng còn thiếu.
  * 2. seed    — chép nội dung mặc định cho các khóa CHƯA có (không ghi đè bản quản trị đã sửa).
+ *    seed-admins — tạo 3 tài khoản admin có sẵn nếu CHƯA có (không ghi đè, xem scripts/seed-admins.ts).
  * 3. admin   — nếu có ADMIN_EMAIL và ADMIN_PASSWORD thì tạo/đặt lại tài khoản quản trị.
  *              Không có hai biến đó thì bỏ qua, build vẫn chạy bình thường.
  *              Tạo xong nên xóa ADMIN_PASSWORD khỏi Environment Variables.
@@ -28,6 +29,7 @@ function run(script: string, args: string[] = []) {
 async function main() {
   run("db-migrate.ts");
   run("db-seed.ts");
+  run("seed-admins.ts");
 
   const hasAdmin = Boolean(process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD);
   if (hasAdmin) {

@@ -20,6 +20,7 @@ Mỗi lab xong thêm một dòng: lab · ngày · việc đã làm · cách ki�
 | 14 | CMS: cấu hình 27 khối sinh form + Zod, trình sửa (es/en, danh sách ↑↓✕, tải ảnh Blob/local, khôi phục), updateTag cập nhật ngay | thử sửa hero → trang đổi ngay · lỗi ô · tải tệp giả bị chặn · khôi phục ✓ |
 | 15 | Vitest (31 test hàm thuần), Playwright (18 test E2E trên build production, CSDL riêng), CI GitHub Actions, README deploy, release-check cập nhật — **Mốc 2: demo cuối** | `npm test` ✓ · `npm run test:e2e` ✓ · build ✓ |
 | 16 | **Lên production** (Vercel, `tbagri.vercel.app`): hero chạy hết bề ngang, `scripts/bootstrap.ts` chuẩn bị CSDL khi build, sửa preset Next.js (lỗi 404 cả trang); dựng lại vòng s04 đúng thiết kế (cung tròn + chuỗi mũi tên) kèm hover đổi nền ô; sửa nút đổi ngôn ngữ dùng `<a>` thay `<Link>` (trước đó DOM còn cả bộ giao diện ngôn ngữ cũ) | compare s04: 6.7% → 4.6% · `npm test` 31 ✓ · `npm run test:e2e` 20 ✓ (thêm 2 test đổi ngôn ngữ) · kiểm /es ↔ /en trên bản chạy thật ✓ |
+| 17 | Quản lý tài khoản quản trị (`/admin/users`: thêm, đổi vai trò, bật/tắt, đặt lại mật khẩu tạm) + tự đổi mật khẩu (`/admin/account`), bắt buộc đổi mật khẩu tạm (migration `0001`), 3 admin có sẵn tạo khi build (`scripts/seed-admins.ts`) | `npm test` 38 ✓ · `npm run test:e2e` 22 ✓ (thêm 2 test tài khoản) · 1250px/390px không tràn ngang |
 
 ## Trạng thái hiện tại
 
