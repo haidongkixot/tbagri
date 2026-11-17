@@ -23,8 +23,17 @@ function sniff(buf: Buffer): "jpg" | "png" | "webp" | "avif" | null {
 }
 
 /**
+ * Mã kho Blob khi kho được gắn vào project theo kiểu mới (xác thực OIDC, không có token đọc-ghi).
+ * Vercel đặt tên biến theo tiền tố chọn lúc gắn: project này là `TBAGRI_STORE_ID`.
+ */
+function blobStoreId() {
+  return process.env.BLOB_STORE_ID || process.env.TBAGRI_STORE_ID || undefined;
+}
+
+/**
  * Tải ảnh lên cho CMS.
- * - Có BLOB_READ_WRITE_TOKEN (Vercel) → lưu Vercel Blob, trả URL công khai.
+ * - Vercel Blob khi có BLOB_READ_WRITE_TOKEN (kiểu cũ) hoặc mã kho BLOB_STORE_ID/TBAGRI_STORE_ID
+ *   (kiểu mới: thư viện tự dùng VERCEL_OIDC_TOKEN của Vercel) → trả URL công khai.
  * - Không có (máy cá nhân) → ghi vào public/uploads/ (chỉ dùng khi phát triển).
  * Chỉ nhận JPG/PNG/WebP/AVIF ≤ 4 MB; tên tệp do server tự đặt.
  */
@@ -41,15 +50,21 @@ export async function uploadImage(formData: FormData): Promise<UploadResult> {
 
   try {
     let url: string;
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const storeId = blobStoreId();
+    if (process.env.BLOB_READ_WRITE_TOKEN || storeId) {
       const blob = await put(`cms/${name}`, buf, {
         access: "public",
         contentType: `image/${ext === "jpg" ? "jpeg" : ext}`,
+        // Có token đọc-ghi thì thư viện ưu tiên token; không có thì dùng OIDC + mã kho
+        ...(storeId && !process.env.BLOB_READ_WRITE_TOKEN ? { storeId } : {}),
       });
       url = blob.url;
     } else {
       if (process.env.VERCEL) {
-        return { ok: false, message: "Chưa cấu hình Vercel Blob (BLOB_READ_WRITE_TOKEN)." };
+        return {
+          ok: false,
+          message: "Chưa gắn kho Vercel Blob (BLOB_READ_WRITE_TOKEN hoặc BLOB_STORE_ID).",
+        };
       }
       const dir = path.join(process.cwd(), "public", "uploads");
       await mkdir(dir, { recursive: true });
