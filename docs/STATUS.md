@@ -192,11 +192,12 @@ form → admin → CMS chạy thật, test và CI xanh).
 |---|---|---|
 | `tbagri.vercel.app` | Website thành phẩm (+ `/admin`) | Project `tbagri` ← kho `tbagri` nhánh `main`, commit `c4a29cf` |
 | `tbagri-web.vercel.app` | Website học tập khóa nâng cao: một trang HTML tự chứa — 4 buổi, 15 lab với prompt chép một chạm, Prompt Builder (MBRT 2.0), PRD Builder (4Ds), Skill Builder, QA checklist | Project `tbagri-web` ← kho `tbagri-web` nhánh **`course-site`**, thư mục `course-site`, commit `fedeb0f`. `vercel.json` ép `framework: null` vì preset project là Next.js |
-| `tbcaitraining.vercel.app` | Website khóa cơ bản | Project `tbcaitraining` · `prj_F7M2sUyb8rXC7BCdj6gHYsn9lULA` — **không nối GitHub**, bản đang chạy deploy từ máy ngày 05/10/2026 nên muốn sửa phải deploy lại từ máy có mã nguồn |
+| `tbcaitraining.vercel.app` | Website khóa cơ bản | Project `tbcaitraining` · `prj_F7M2sUyb8rXC7BCdj6gHYsn9lULA` — **không nối GitHub**, bản đang chạy deploy từ máy ngày 05/10/2026. **Nguồn là artifact `claude.ai/artifact/DK6fpejqQyWPNCJ4RXiRdC`** ("Claude Code Cơ bản — Thai Binh Corporation"): sửa ở artifact rồi deploy lại, đừng sửa bundle đã nén |
 
 ### Giáo trình và tài nguyên
 
-- Giáo trình (Claude Doc): `claude.ai/code/artifact/634005f5-da1a-4c68-86a9-34b1060ee415` —
+- Giáo trình (Claude Doc): `claude.ai/code/artifact/634005f5-da1a-4c68-86a9-34b1060ee415`
+  (dạng ngắn `claude.ai/artifact/DFqbQJYMuGgiHFi9ifKwUG`) —
   tổng quan, 4 buổi, 15 lab dạng tab con, phần Tham khảo (MBRT 2.0, skills/subagents/hooks/rules,
   xử lý lỗi, mẫu tài liệu).
 - Website học tập bản artifact: `claude.ai/artifact/SoHV8GXMUpnoPymUJKkvrd`.
@@ -204,6 +205,9 @@ form → admin → CMS chạy thật, test và CI xanh).
   xử lý, PRD, tokens, spec, CLAUDE.md, rules, hooks, 8 skills, 3 subagents, 15 tệp prompt.
 - Bản giải đáp của giảng viên: `tbagri-web-solution.zip` — repo git có 15 tag `lab-01`…`lab-15`.
 - Hai tệp zip chưa nằm trong thư mục Drive bàn giao (phiên Claude Code không còn giữ chúng).
+
+Danh mục đầy đủ 85 artifact claude.ai của chủ dự án (liệt kê 25/11/2026, chia 9 nhóm) nằm ở mục 10
+của tài liệu Drive bên dưới.
 
 Phần vận hành khóa học (hạ tầng, tài khoản, việc chờ quyết định) nằm trong tài liệu Google Drive
 "TBAgri Web — Bàn giao hạ tầng & truy cập", mục 9.
