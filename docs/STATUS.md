@@ -3,7 +3,7 @@
 > Cập nhật: 2026-11-25 · Chạy thật: **https://tbagri.vercel.app**
 > Tài liệu này để mở một phiên Claude Code mới ở máy khác mà không cần đọc lại lịch sử chat.
 > Đọc cùng với `CLAUDE.md` (quy ước bắt buộc), `docs/PRD.md` (yêu cầu), `docs/progress.md` (nhật ký lab).
-> Phần hạ tầng và quyền truy cập từ phiên Claude Code: **mục 8**.
+> Hạ tầng và quyền truy cập từ phiên Claude Code: **mục 8**. Khóa đào tạo: **mục 9**.
 
 ## 1. Dự án là gì
 
@@ -27,11 +27,16 @@ Kho mã: `github.com/haidongkixot/tbagri` · nhánh chính `main`.
 | CSDL | Neon Postgres qua biến `DATABASE_URL` — **chưa rõ là project Neon nào, xem mục 8** |
 | Ảnh tải lên | Vercel Blob, kho `tbagri-store` gắn kiểu mới: Vercel chỉ đặt `TBAGRI_STORE_ID` (xác thực OIDC), **không** có `BLOB_READ_WRITE_TOKEN`. `src/server/actions/upload.ts` nhận cả hai kiểu |
 
-**Cạm bẫy tên "tbagri-web".** Có ba thứ cùng tên này và **không thứ nào còn dùng**:
-kho GitHub `haidongkixot/tbagri-web` (3 commit, thử nghiệm "VerdaAgro UX"), project Vercel
-`prj_WERE9JFrKoUBDLER9nJ4rVmkmGIi`, và project Neon `blue-cherry-96351244` (lược đồ Prisma kiểu
-`AdminUser`/`BlogPost`, không phải lược đồ Drizzle của trang này). Trang thật luôn là kho
-`haidongkixot/tbagri` → project Vercel `tbagri`.
+**Cạm bẫy tên "tbagri-web".** Có ba thứ cùng tên này, rất dễ sửa hoặc deploy nhầm:
+kho GitHub `haidongkixot/tbagri-web`, project Vercel `prj_WERE9JFrKoUBDLER9nJ4rVmkmGIi`, và
+project Neon `blue-cherry-96351244` (lược đồ Prisma kiểu `AdminUser`/`BlogPost`, không phải lược
+đồ Drizzle của trang này). Trang TBAgri **không** nằm ở bất cứ cái nào trong ba cái đó — nó luôn
+là kho `haidongkixot/tbagri` → project Vercel `tbagri`.
+
+Nhưng **đừng xóa project Vercel `tbagri-web`**: nó đang chạy website học tập của khóa đào tạo,
+build từ nhánh `course-site` của kho `haidongkixot/tbagri-web` (xem mục 9). Chỉ nhánh `main` của
+kho đó (thử nghiệm giao diện "VerdaAgro UX") và project Neon `blue-cherry-96351244` là thực sự
+bỏ được.
 
 ## 3. Trạng thái từng phần
 
@@ -171,3 +176,34 @@ Số đo nằm ở đầu tệp dưới dạng hằng số có chú thích — s
 hạ tầng/truy cập cùng các tệp không nên để trong kho mã (file thiết kế gốc, ảnh kiểm chứng).
 File thiết kế gốc dạng PDF 30 MB nằm ở đó; trong kho mã đã có `docs/design/ref/full-page.jpg`
 và ảnh từng section, đủ để dựng giao diện.
+
+## 9. Khóa đào tạo
+
+Website này là dự án thực hành của hai khóa đào tạo nội bộ. Khóa nâng cao: 4 buổi lý thuyết +
+3 tuần thực hành, 15 lab (nhật ký từng lab ở `docs/progress.md`); hết khóa mỗi học viên tự dựng
+và đưa website lên mạng. Khóa cơ bản: 2 buổi lý thuyết 2 tiếng + 2 tuần thực hành, có module
+viết PRD theo 4Ds. Hai mốc đánh giá khóa nâng cao: **Mốc 1** sau lab 10 (compare 14 section lệch
+≤ 1px chiều cao, build đạt, không tràn ngang); **Mốc 2** ở buổi 4 (deploy production, luồng
+form → admin → CMS chạy thật, test và CI xanh).
+
+### Bốn địa chỉ đang chạy (kiểm chứng 25/11/2026)
+
+| Địa chỉ | Là gì | Nguồn |
+|---|---|---|
+| `tbagri.vercel.app` | Website thành phẩm (+ `/admin`) | Project `tbagri` ← kho `tbagri` nhánh `main`, commit `c4a29cf` |
+| `tbagri-web.vercel.app` | Website học tập khóa nâng cao: một trang HTML tự chứa — 4 buổi, 15 lab với prompt chép một chạm, Prompt Builder (MBRT 2.0), PRD Builder (4Ds), Skill Builder, QA checklist | Project `tbagri-web` ← kho `tbagri-web` nhánh **`course-site`**, thư mục `course-site`, commit `fedeb0f`. `vercel.json` ép `framework: null` vì preset project là Next.js |
+| `tbcaitraining.vercel.app` | Website khóa cơ bản | Project `tbcaitraining` · `prj_F7M2sUyb8rXC7BCdj6gHYsn9lULA` — **không nối GitHub**, bản đang chạy deploy từ máy ngày 05/10/2026 nên muốn sửa phải deploy lại từ máy có mã nguồn |
+
+### Giáo trình và tài nguyên
+
+- Giáo trình (Claude Doc): `claude.ai/code/artifact/634005f5-da1a-4c68-86a9-34b1060ee415` —
+  tổng quan, 4 buổi, 15 lab dạng tab con, phần Tham khảo (MBRT 2.0, skills/subagents/hooks/rules,
+  xử lý lỗi, mẫu tài liệu).
+- Website học tập bản artifact: `claude.ai/artifact/SoHV8GXMUpnoPymUJKkvrd`.
+- Starter kit phát ở buổi 1: `tbagri-starter-kit.zip` — PDF thiết kế + 14 ảnh tham chiếu, ảnh đã
+  xử lý, PRD, tokens, spec, CLAUDE.md, rules, hooks, 8 skills, 3 subagents, 15 tệp prompt.
+- Bản giải đáp của giảng viên: `tbagri-web-solution.zip` — repo git có 15 tag `lab-01`…`lab-15`.
+- Hai tệp zip chưa nằm trong thư mục Drive bàn giao (phiên Claude Code không còn giữ chúng).
+
+Phần vận hành khóa học (hạ tầng, tài khoản, việc chờ quyết định) nằm trong tài liệu Google Drive
+"TBAgri Web — Bàn giao hạ tầng & truy cập", mục 9.
