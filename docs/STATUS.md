@@ -1,8 +1,9 @@
 # Trạng thái dự án TBAgri Web
 
-> Cập nhật: 2026-11-12 (lab 17 — quản lý tài khoản quản trị) · Chạy thật: **https://tbagri.vercel.app**
+> Cập nhật: 2026-11-25 · Chạy thật: **https://tbagri.vercel.app**
 > Tài liệu này để mở một phiên Claude Code mới ở máy khác mà không cần đọc lại lịch sử chat.
 > Đọc cùng với `CLAUDE.md` (quy ước bắt buộc), `docs/PRD.md` (yêu cầu), `docs/progress.md` (nhật ký lab).
+> Phần hạ tầng và quyền truy cập từ phiên Claude Code: **mục 8**.
 
 ## 1. Dự án là gì
 
@@ -20,14 +21,17 @@ Kho mã: `github.com/haidongkixot/tbagri` · nhánh chính `main`.
 | Tên miền | `tbagri.vercel.app` (chưa gắn tên miền riêng) |
 | Vercel project | `tbagri` · `prj_qIYeTMwa7adkhyIh5soFyl0ePZQR` |
 | Vercel team | `haidongkixots-projects` · `team_wbKguqX6Wj8eVKG1K332eQFD` |
-| Bản deploy hiện tại | Xem Vercel → project `tbagri` → Deployments (mỗi push `main` tự deploy production) |
+| Bản deploy hiện tại | `dpl_5gaiJZ2dy8xn8RcuQ4LroRzeQ1R7` — commit `c4a29cf`, READY, 2026-11-16. Mỗi push `main` tự deploy production (GitHub đã nối, không cần deploy bằng API nữa) |
 | Framework Preset | **Next.js** (đã đặt đúng, xem mục 6) |
 | Build Command | `npm run vercel-build` → `scripts/bootstrap.ts` (migrate → seed → 3 admin có sẵn → tạo admin nếu có biến) rồi `next build` |
-| CSDL | Neon Postgres qua biến `DATABASE_URL` |
-| Ảnh tải lên | Vercel Blob qua `BLOB_READ_WRITE_TOKEN` |
+| CSDL | Neon Postgres qua biến `DATABASE_URL` — **chưa rõ là project Neon nào, xem mục 8** |
+| Ảnh tải lên | Vercel Blob, kho `tbagri-store` gắn kiểu mới: Vercel chỉ đặt `TBAGRI_STORE_ID` (xác thực OIDC), **không** có `BLOB_READ_WRITE_TOKEN`. `src/server/actions/upload.ts` nhận cả hai kiểu |
 
-Có một kho/project cũ tên `tbagri-web` (`prj_WERE9JFrKoUBDLER9nJ4rVmkmGIi`) **không còn dùng** —
-deploy nhầm vào đó thì trang thật không đổi.
+**Cạm bẫy tên "tbagri-web".** Có ba thứ cùng tên này và **không thứ nào còn dùng**:
+kho GitHub `haidongkixot/tbagri-web` (3 commit, thử nghiệm "VerdaAgro UX"), project Vercel
+`prj_WERE9JFrKoUBDLER9nJ4rVmkmGIi`, và project Neon `blue-cherry-96351244` (lược đồ Prisma kiểu
+`AdminUser`/`BlogPost`, không phải lược đồ Drizzle của trang này). Trang thật luôn là kho
+`haidongkixot/tbagri` → project Vercel `tbagri`.
 
 ## 3. Trạng thái từng phần
 
@@ -38,7 +42,7 @@ deploy nhầm vào đó thì trang thật không đổi.
 | Trang Nuestras tiendas, 404 song ngữ, sitemap, robots, JSON-LD | ✅ xong | |
 | Form liên hệ → bảng `leads` | ✅ xong | Zod, bẫy bot, giới hạn 5 lần/giờ/IP (IP băm) |
 | Email thông báo lead (Resend) | ⚠️ tùy chọn | Chỉ chạy khi có `RESEND_API_KEY`; chưa đặt trên production |
-| Đăng nhập quản trị | ⚠️ **chặn** | Thiếu `SESSION_SECRET` trên production — xem mục 5 |
+| Đăng nhập quản trị | ❓ chờ xác nhận | Lab 17 đã phát 3 tài khoản kèm mật khẩu tạm, nên `SESSION_SECRET` **có lẽ** đã đặt xong. Không đọc được biến môi trường từ phiên Claude Code (mục 8) → thử đăng nhập `/admin` để biết chắc |
 | Bảng leads, xuất CSV, nhật ký | ✅ xong | Nằm sau đăng nhập |
 | Quản lý tài khoản quản trị, đổi mật khẩu | ✅ xong (lab 17) | `/admin/users` (chỉ admin), `/admin/account`; spec `docs/specs/admin-users.md` |
 | CMS sửa nội dung (27 khối) | ✅ xong | Nằm sau đăng nhập |
@@ -73,25 +77,29 @@ Lệnh hay dùng: `npm run typecheck` · `lint` · `format` · `test` · `test:e
 
 ## 5. Việc còn mở
 
-1. **`SESSION_SECRET` và `IP_HASH_SALT` trên Vercel** — việc duy nhất đang chặn tính năng.
-   Thiếu `SESSION_SECRET` (≥ 32 ký tự) thì `src/server/auth/session.ts` ném lỗi và đăng nhập
-   `/admin` báo "Không đăng nhập được do lỗi hệ thống".
-   Cách làm: Vercel → project `tbagri` → Settings → Environment Variables → thêm cho
-   Production (`openssl rand -hex 32` cho mỗi biến) → deploy lại.
-   *Kết nối Vercel MCP hiện tại không có quyền đọc/ghi biến môi trường (403), nên trạng thái
-   thật của hai biến này chưa kiểm chứng được từ phiên Claude Code — hãy thử đăng nhập
-   `/admin` để biết.*
-2. **Tài khoản quản trị.** Bước build tạo sẵn `admin1@tbagri.cu`, `admin2@tbagri.cu`,
+1. **Xác nhận `SESSION_SECRET` và `IP_HASH_SALT` trên Vercel.** Thiếu `SESSION_SECRET`
+   (≥ 32 ký tự) thì `src/server/auth/session.ts` ném lỗi và đăng nhập `/admin` báo "Không đăng
+   nhập được do lỗi hệ thống". Lab 17 phát được mật khẩu tạm nên hai biến này có lẽ đã có; cần
+   một lần đăng nhập để chốt. Nếu thiếu: Vercel → project `tbagri` → Settings → Environment
+   Variables → thêm cho Production (`openssl rand -hex 32` cho mỗi biến) → deploy lại.
+   Phiên Claude Code **không đọc được** biến môi trường (mục 8), nên việc này phải làm tay.
+2. **Xác định project Neon của production.** `DATABASE_URL` trỏ tới đâu thì chưa biết: tổ chức
+   Neon mà phiên Claude Code thấy được (`org-rapid-wave-11370503`) **không có** project nào chứa
+   bảng `content_entries`/`leads`/`admin_users`. Khả năng cao CSDL được cấp qua Vercel Marketplace
+   nên nằm ở tổ chức Neon khác. Cách chốt: Vercel → `tbagri` → Settings → Environment Variables →
+   xem host trong `DATABASE_URL`, rồi đối chiếu `proxy_host` của các project Neon. Biết rồi thì
+   ghi thẳng project id vào mục 2 để lần sau truy vấn CSDL thật được bằng Neon MCP.
+3. **Tài khoản quản trị.** Bước build tạo sẵn `admin1@tbagri.cu`, `admin2@tbagri.cu`,
    `admin3@tbagri.cu` (`scripts/seed-admins.ts`, mật khẩu tạm đã gửi chủ dự án, bắt buộc đổi ở lần
    đăng nhập đầu). Thêm người, đổi vai trò, tắt, đặt lại mật khẩu: trang `/admin/users`.
    `npm run admin:create` chỉ còn dùng khi mất hết quyền admin. Nếu `ADMIN_PASSWORD` còn trên
    Vercel thì **xóa đi** — mỗi lần build nó đặt lại mật khẩu tài khoản `ADMIN_EMAIL`.
-3. **Nhánh `fix/ui-alignment-review`** (9 commit, chưa gộp) — việc của một agent khác, chỉ đổi
-   CSS hover và căn viền vòng s04. Phần hover đã làm lại trong `main` nên nhánh này **xóa được**.
-4. **Tên miền riêng** — chưa gắn, đang dùng `tbagri.vercel.app`.
-5. **`RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_NOTIFY_FROM`** — chưa đặt, nên lead chỉ lưu vào
+4. **Nhánh `fix/ui-alignment-review`** (9 commit, chưa gộp) — việc của một agent khác, chỉ đổi
+   CSS hover và căn viền vòng s04. Phần hover đã làm lại trong `main` nên nhánh này **xóa được** (vẫn còn trên origin tính đến 2026-11-25).
+5. **Tên miền riêng** — chưa gắn, đang dùng `tbagri.vercel.app`.
+6. **`RESEND_API_KEY`, `LEAD_NOTIFY_TO`, `LEAD_NOTIFY_FROM`** — chưa đặt, nên lead chỉ lưu vào
    CSDL, không có email báo.
-6. **Cỡ chữ nhãn trong vòng s04** đang lớn hơn thiết kế khoảng 20% (13px so với ~11px). Chưa sửa
+7. **Cỡ chữ nhãn trong vòng s04** đang lớn hơn thiết kế khoảng 20% (13px so với ~11px). Chưa sửa
    vì nằm ngoài phạm vi yêu cầu; sửa thì đổi `text-[0.8125rem]` trong `CycleWheel.tsx`.
 
 ## 6. Quyết định kỹ thuật cần nhớ
@@ -136,3 +144,30 @@ Số đo nằm ở đầu tệp dưới dạng hằng số có chú thích — s
 |---|---|
 | `main` | Nhánh chạy production (push là Vercel tự deploy) |
 | `fix/ui-alignment-review` | `f3502d8` — chưa gộp, không còn cần (xem mục 5.3) |
+
+## 8. Hạ tầng và quyền truy cập từ phiên Claude Code
+
+Đã thử thật ngày 2026-11-25. Biết trước những giới hạn này thì đỡ mất thời gian dò lại.
+
+| Việc | Được? | Ghi chú |
+|---|---|---|
+| Git: clone, commit, push `main` | ✅ | `github.com/haidongkixot/tbagri`; push `main` là Vercel tự deploy production |
+| Vercel: xem project, deployment, log build/chạy | ✅ | `list_deployments`, `get_deployment`, `get_runtime_logs` |
+| Vercel: tạo deployment bằng API | ✅ | Chỉ cần khi GitHub không tự deploy; nhớ truyền `projectSettings` (mục 6) |
+| Vercel: **đọc/ghi Environment Variables** | ❌ 403 | `GET /v10/projects/{id}/env` → `forbidden`. Mọi việc với biến môi trường phải làm tay trong Dashboard |
+| Vercel: **xem Integrations / Marketplace** | ❌ 403 | `GET /v1/integrations/configurations` → `forbidden`. Nên không tra được kho Blob hay CSDL gắn vào project |
+| Neon: xem project, branch, bảng, chạy SQL | ✅ | Nhưng chỉ trong tổ chức `org-rapid-wave-11370503` — **không thấy** CSDL production của trang này (mục 5.2) |
+| Gọi `https://tbagri.vercel.app` bằng `curl` | ❌ | Mạng của container chặn; dùng `mcp__Vercel__web_fetch_vercel_url` thay thế |
+| Đọc `.env`, `.env.local` | ❌ | `CLAUDE.md` cấm. Chỉ đọc `.env.example` |
+
+**Mã nhận dạng cần dùng lại**
+
+- Vercel project: `tbagri` · `prj_qIYeTMwa7adkhyIh5soFyl0ePZQR`
+- Vercel team: `haidongkixots-projects` · `team_wbKguqX6Wj8eVKG1K332eQFD`
+- Kho Blob: `tbagri-store` (biến `TBAGRI_STORE_ID`, xác thực OIDC)
+- Neon org thấy được: `org-rapid-wave-11370503`
+
+**Tài liệu bàn giao ngoài git**: thư mục Google Drive "TBAgri Web — Bàn giao" chứa bản tóm tắt
+hạ tầng/truy cập cùng các tệp không nên để trong kho mã (file thiết kế gốc, ảnh kiểm chứng).
+File thiết kế gốc dạng PDF 30 MB nằm ở đó; trong kho mã đã có `docs/design/ref/full-page.jpg`
+và ảnh từng section, đủ để dựng giao diện.

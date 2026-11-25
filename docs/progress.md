@@ -26,3 +26,5 @@ Mỗi lab xong thêm một dòng: lab · ngày · việc đã làm · cách ki�
 
 Xem `docs/STATUS.md` — nơi chạy, việc còn mở, và các quyết định kỹ thuật cần nhớ khi mở
 phiên Claude Code ở máy khác.
+
+| 18 | Rà soát lại hạ tầng để bàn giao: chốt bản deploy production, sửa thông tin kho Blob (OIDC + `TBAGRI_STORE_ID`), ghi rõ ba thứ cùng tên "tbagri-web" đều là đường cùng, và lập bảng quyền truy cập thật của phiên Claude Code (Vercel env/integrations 403, Neon không thấy CSDL production) | `list_deployments` ✓ · `filter_project_envs` → 403 (đã ghi lại) · `get_database_tables` trên `blue-cherry-96351244` → lược đồ Prisma, không phải của trang này |
